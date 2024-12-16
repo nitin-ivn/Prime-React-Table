@@ -2,13 +2,21 @@ import React, { useState } from 'react'
 import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'
 import { Paginator,PaginatorPageChangeEvent } from 'primereact/paginator'
+import { useDispatch, useSelector } from 'react-redux'
 import './tablepage.css'
+import { fetchTable } from '../../store/features/tableSlice'
+import { AppDispatch } from '../../store/store'
 
 function TablePage() {
-    const [first, setFirst] = useState<number>(0);
+    const dispatch = useDispatch<AppDispatch>();
+    const [first, setFirst] = useState<number>(1);
+
+
 
     const onPageChange = (event: PaginatorPageChangeEvent) => {
+        const num = event.page + 1;
         setFirst(event.first);
+        dispatch(fetchTable(num));
     };
 
   return (
