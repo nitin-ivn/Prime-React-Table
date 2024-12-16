@@ -1,6 +1,7 @@
 import { createSlice, Slice, createAsyncThunk } from "@reduxjs/toolkit";
 
 interface table {
+    id: number,
     title: string,
     place_of_origin: string,
     artist_display: string;
@@ -14,11 +15,12 @@ interface initState {
     isError: boolean
 }
 
-export const fetchTable = createAsyncThunk('fetchTable', async (e: number) => {
+export const fetchTable = createAsyncThunk<table[], number>('fetchTable', async (e: number) => {
     const response = await fetch(`https://api.artic.edu/api/v1/artworks?page=${e}`);
     const data = await response.json();
 
     const filter = data.data.map((item: any) => ({
+        id: item.id,
         title: item.title,
         place_of_origin: item.place_of_origin,
         artist_display: item.artist_display,
@@ -43,6 +45,7 @@ export const tableSlice: Slice = createSlice({
     extraReducers: (builder) => {
         builder.addCase(fetchTable.fulfilled, (state,action) => {
             state.isLoading = false;
+            console.log(action.payload);
             state.table = action.payload;
         });
 

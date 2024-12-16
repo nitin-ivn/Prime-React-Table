@@ -5,5 +5,6 @@ const store: Store = configureStore({
     reducer: {table: tableReducer}
 })
 
+export type StoreType = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
 export default store;
