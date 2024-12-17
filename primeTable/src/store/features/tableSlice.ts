@@ -12,12 +12,15 @@ interface table {
 interface initState {
     isLoading: boolean,
     table: table[],
-    isError: boolean
+    isError: boolean,
+    total_pages: number,
 }
 
-export const fetchTable = createAsyncThunk<table[], number>('fetchTable', async (e: number) => {
+export const fetchTable = createAsyncThunk<{filter: table[], totalPages: number}, number>('fetchTable', async (e: number) => {
     const response = await fetch(`https://api.artic.edu/api/v1/artworks?page=${e}`);
     const data = await response.json();
+
+    const totalPages = data.pagination.total_pages;
 
     const filter = data.data.map((item: any) => ({
         id: item.id,
@@ -28,7 +31,7 @@ export const fetchTable = createAsyncThunk<table[], number>('fetchTable', async 
         date_end: item.date_end,
     }));
 
-    return filter;
+    return {filter, totalPages};
 });
 
 
@@ -36,6 +39,7 @@ const initialState: initState = {
     isLoading: false,
     table: [],
     isError: false,
+    total_pages: 0
 }
 
 export const tableSlice: Slice = createSlice({
@@ -45,8 +49,8 @@ export const tableSlice: Slice = createSlice({
     extraReducers: (builder) => {
         builder.addCase(fetchTable.fulfilled, (state,action) => {
             state.isLoading = false;
-            console.log(action.payload);
-            state.table = action.payload;
+            state.table = action.payload.filter;
+            state.total_pages = action.payload.totalPages;
         });
 
         builder.addCase(fetchTable.pending, (state, action) => {
