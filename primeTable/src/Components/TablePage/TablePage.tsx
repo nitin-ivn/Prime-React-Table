@@ -33,13 +33,12 @@ function TablePage() {
     const onPageChange = (event: PaginatorPageChangeEvent) => {
         const num: number = event.page + 1;
         setFirst(event.first);
-        dispatch(fetchTable(num));
-        console.log(numberRows);
+        dispatch(fetchTable(num))
     };
 
     useEffect(() => {
         if(numberRows > 0 && !isLoading ){
-            console.log(numberRows);
+            // console.log(numberRows);
             selectRowsInPage(numberRows);
         }
     },[isLoading,table]);
@@ -55,6 +54,8 @@ function TablePage() {
         let tempRow = rows;
         let tempTable = table;
         let totalSelected = selectedRows ? selectedRows.length : 0;
+        console.log(totalSelected);
+        console.log(rows);
 
         for(let i = 0;i<tempTable.length && totalSelected < rows; i++){
             if(!selectedTempRows.includes(tempTable[i])){
@@ -64,7 +65,11 @@ function TablePage() {
             }
         }
 
-        setNumberRows(tempRow);
+        console.log(totalSelected);
+
+        
+
+        console.log(selectedTempRows);
 
         setSelectedRows(prev => {
             const updatedSelectedRows = prev ? [...prev] : [];
