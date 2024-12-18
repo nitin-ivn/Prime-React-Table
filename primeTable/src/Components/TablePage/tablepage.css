@@ -3,13 +3,13 @@
 }
 
 .card{
-    position: relative;
+   
 }
 
 .overlay{
     position: absolute;
-    top: 2rem;
-    left: 5vw;
+    top: 35%;
+    left: 75%;
     cursor: pointer;
 }
 

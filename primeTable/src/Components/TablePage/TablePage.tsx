@@ -38,7 +38,6 @@ function TablePage() {
 
     useEffect(() => {
         if(numberRows > 0 && !isLoading ){
-            // console.log(numberRows);
             selectRowsInPage(numberRows);
         }
     },[isLoading,table]);
@@ -55,10 +54,9 @@ function TablePage() {
         let tempTable = table;
         let totalSelected = selectedRows ? selectedRows.length : 0;
         console.log(totalSelected);
-        console.log(rows);
 
         for(let i = 0;i<tempTable.length && totalSelected < rows; i++){
-            if(!selectedTempRows.includes(tempTable[i])){
+            if(!selectedTempRows.includes(tempTable[i]) && !selectedRows?.includes(tempTable[i])){
                 selectedTempRows.push(tempTable[i]);
                 totalSelected++;
                 tempRow--;
@@ -66,11 +64,7 @@ function TablePage() {
         }
 
         console.log(totalSelected);
-
-        
-
-        console.log(selectedTempRows);
-
+        console.log(rows);
         setSelectedRows(prev => {
             const updatedSelectedRows = prev ? [...prev] : [];
             return [...updatedSelectedRows, ...selectedTempRows];
@@ -89,7 +83,13 @@ function TablePage() {
     <div className='page'>
         <div className="card">
             <DataTable value={table} className='table' loading={isLoading} selectionMode={'checkbox'} selection={selectedRows} onSelectionChange={handleSelection} dataKey="">
-            <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column>
+            <Column
+                selectionMode="multiple"
+                header={
+                    <img className='overlay' onClick={(e) => op.current?.toggle(e)} src="/chevron-down.svg"/>
+                }
+                headerStyle={{ position: 'relative'}}
+            ></Column>
                 <Column field="title" header="Title"></Column>
                 <Column field="place_of_origin" header="Place Of Origin"></Column>
                 <Column field="artist_display" header="Artist Display"></Column>
@@ -97,7 +97,7 @@ function TablePage() {
                 <Column field="date_end" header="Date End"></Column>
             </DataTable>
 
-            <img onClick={(e) => op.current?.toggle(e)} className='overlay' src="/chevron-down.svg" alt="" />
+            
         </div>
 
         <OverlayPanel ref={op}>
