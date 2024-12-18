@@ -53,7 +53,6 @@ function TablePage() {
         let tempRow = rows;
         let tempTable = table;
         let totalSelected = selectedRows ? selectedRows.length : 0;
-        console.log(totalSelected);
 
         for(let i = 0;i<tempTable.length && totalSelected < rows; i++){
             if(!selectedTempRows.includes(tempTable[i]) && !selectedRows?.includes(tempTable[i])){
@@ -62,9 +61,7 @@ function TablePage() {
                 tempRow--;
             }
         }
-
-        console.log(totalSelected);
-        console.log(rows);
+        
         setSelectedRows(prev => {
             const updatedSelectedRows = prev ? [...prev] : [];
             return [...updatedSelectedRows, ...selectedTempRows];
