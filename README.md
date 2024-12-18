@@ -4,7 +4,7 @@ This is Prime React Table made from DataTable and Pagination in PrimeReact.
 It dynamically calls the API everytime we change page.
 It maintains the state of selected rows when we change from pages and come back to it
 
-Hosted Link: 
+Hosted Link: https://internprimereacttable.netlify.app/
 
 Steps to Run:
 1) Clone The Repository.
