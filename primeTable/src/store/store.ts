@@ -1,7 +1,7 @@
-import { configureStore, Store } from "@reduxjs/toolkit";
+import { configureStore } from "@reduxjs/toolkit";
 import tableReducer from './features/tableSlice.ts'
 
-const store: Store = configureStore({
+const store = configureStore({
     reducer: {table: tableReducer}
 })
 

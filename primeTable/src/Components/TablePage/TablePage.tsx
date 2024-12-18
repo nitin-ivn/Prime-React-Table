@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'
 import { Paginator,PaginatorPageChangeEvent } from 'primereact/paginator'
@@ -9,14 +9,23 @@ import { AppDispatch } from '../../store/store'
 import { StoreType } from '../../store/store'
 import { OverlayPanel } from 'primereact/overlaypanel'
 
+
+type RowData = {
+    id: number;
+    title: string;
+    place_of_origin: string;
+    artist_display: string;
+    date_start: string;
+    date_end: string;
+};
+
 function TablePage() {
-    const op = useRef(null);
-    const inp = useRef(null);
-    let pageChange: number = 0;
+    const op = useRef<OverlayPanel | null>(null);
+    const inp = useRef<HTMLInputElement | null>(null);
     const [numberRows, setNumberRows] = useState<number>(0);
     const dispatch = useDispatch<AppDispatch>();
     const [first, setFirst] = useState<number>(1);
-    const [selectedRows, setSelectedRows] = useState<Object>();
+    const [selectedRows, setSelectedRows] = useState<Object[]>();
     const { table, isLoading, total_pages } = useSelector((state: StoreType) => state.table);
 
     const pages:number = total_pages ? total_pages : 10528;
@@ -25,45 +34,49 @@ function TablePage() {
         const num: number = event.page + 1;
         setFirst(event.first);
         dispatch(fetchTable(num));
-
-        
-
-        if(numberRows > 0){
-            selectRowsInPage(numberRows);
-        }
+        console.log(numberRows);
     };
 
+    useEffect(() => {
+        if(numberRows > 0 && !isLoading ){
+            console.log(numberRows);
+            selectRowsInPage(numberRows);
+        }
+    },[isLoading,table]);
+
     const handleNumberRowChange = () => {
-        const change = inp.current.value;
-        pageChange = change;
+        const change: number = Number(inp.current?.value);
         setNumberRows(change);
-        selectRowsInPage(pageChange);
+        selectRowsInPage(change);
     }
 
-    const selectRowsInPage = async (rows: number) => {
-        let selected = 0;
-        let tempRow = rows;
+    const selectRowsInPage = (rows: number) => {
         let selectedTempRows: Object[] = [];
+        let tempRow = rows;
         let tempTable = table;
-        console.log(table);
+        let totalSelected = selectedRows ? selectedRows.length : 0;
 
-        while(selected < rows && selected < tempTable.length){
-            selectedTempRows.push(tempTable[selected]);
-            selected++;
-            pageChange--;
-            tempRow--;
+        for(let i = 0;i<tempTable.length && totalSelected < rows; i++){
+            if(!selectedTempRows.includes(tempTable[i])){
+                selectedTempRows.push(tempTable[i]);
+                totalSelected++;
+                tempRow--;
+            }
         }
 
-        setNumberRows(pageChange);
+        setNumberRows(tempRow);
 
-        setSelectedRows(selectedTempRows);
+        setSelectedRows(prev => {
+            const updatedSelectedRows = prev ? [...prev] : [];
+            return [...updatedSelectedRows, ...selectedTempRows];
+        });
     }
 
     useEffect(() => {
         dispatch(fetchTable(1));
     },[dispatch]);
 
-    const handleSelection = (e) => {
+    const handleSelection = (e: { value: RowData[] }) => {
         setSelectedRows(e.value);
     }
 
@@ -79,7 +92,7 @@ function TablePage() {
                 <Column field="date_end" header="Date End"></Column>
             </DataTable>
 
-            <img onClick={(e) => op.current.toggle(e)} className='overlay' src="/chevron-down.svg" alt="" />
+            <img onClick={(e) => op.current?.toggle(e)} className='overlay' src="/chevron-down.svg" alt="" />
         </div>
 
         <OverlayPanel ref={op}>
